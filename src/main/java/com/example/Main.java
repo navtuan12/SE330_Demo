@@ -1,57 +1,87 @@
 package com.example;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.GpioPinDigitalInput;
-import com.pi4j.io.gpio.PinPullResistance;
-import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
+import com.pi4j.io.gpio.digital.DigitalInput;
+import com.pi4j.io.gpio.digital.DigitalInputConfig;
+import com.pi4j.io.gpio.digital.DigitalOutput;
+import com.pi4j.io.gpio.digital.DigitalOutputConfig;
+import com.pi4j.io.gpio.digital.DigitalState;
 
 public class Main {
+    private static final int GPIO_PIN = 4;  // GPIO pin number where the data pin of DHT22 is connected
 
-    public static void main(String[] args) throws InterruptedException {
-        // Create GPIO controller
-        final GpioController gpio = GpioFactory.getInstance();
-        
-        // Provision the pin
-        final GpioPinDigitalInput dhtPin = gpio.provisionDigitalInputPin(RaspiPin.GPIO_04, PinPullResistance.PULL_UP);
+    public static void main(String[] args) {
+        // Initialize Pi4J context
+        Context pi4j = Pi4J.newAutoContext();
 
-        // Read sensor data
-        while (true) {
-            DHT22Data dht22Data = readDHT22Data(dhtPin);
-            if (dht22Data != null) {
-                System.out.println("Temperature: " + dht22Data.getTemperature() + " C");
-                System.out.println("Humidity: " + dht22Data.getHumidity() + " %");
-            } else {
-                System.out.println("Failed to read from DHT sensor!");
+        // Configure digital output for triggering the sensor
+        DigitalOutputConfig outputConfig = DigitalOutput.newConfigBuilder(pi4j)
+                .id("dht22-output")
+                .name("DHT22 Output")
+                .address(GPIO_PIN)
+                .shutdown(DigitalState.LOW)
+                .initial(DigitalState.HIGH)
+                .provider("pigpio-digital-output")
+                .build();
+
+        DigitalOutput output = pi4j.create(outputConfig);
+
+        // Configure digital input for reading sensor data
+        DigitalInputConfig inputConfig = DigitalInput.newConfigBuilder(pi4j)
+                .id("dht22-input")
+                .name("DHT22 Input")
+                .address(GPIO_PIN)
+                .provider("pigpio-digital-input")
+                .build();
+
+        DigitalInput input = pi4j.create(inputConfig);
+
+        try {
+            // Read data from the sensor
+            while (true) {
+                // Trigger the sensor
+                output.low();
+                Thread.sleep(18);
+                output.high();
+
+                // Wait for the sensor response
+                while (input.state() == DigitalState.HIGH) ;
+                while (input.state() == DigitalState.LOW) ;
+                while (input.state() == DigitalState.HIGH) ;
+
+                // Read 40 bits of data
+                int[] data = new int[5];
+                for (int i = 0; i < 40; i++) {
+                    while (input.state() == DigitalState.LOW) ;
+                    long start = System.nanoTime();
+                    while (input.state() == DigitalState.HIGH) ;
+                    long duration = System.nanoTime() - start;
+                    int bitIndex = i / 8;
+                    data[bitIndex] <<= 1;
+                    if (duration > 50) {
+                        data[bitIndex] |= 1;
+                    }
+                }
+
+                // Verify checksum
+                int checksum = (data[0] + data[1] + data[2] + data[3]) & 0xFF;
+                if (checksum == data[4]) {
+                    int humidity = (data[0] << 8) + data[1];
+                    int temperature = (data[2] << 8) + data[3];
+                    System.out.printf("Humidity: %.1f%%, Temperature: %.1f°C%n", humidity / 10.0, temperature / 10.0);
+                } else {
+                    System.out.println("Checksum failed");
+                }
+
+                // Wait before reading again
+                Thread.sleep(2000);
             }
-            Thread.sleep(2000); // Delay between reads
-        }
-    }
-
-    private static DHT22Data readDHT22Data(GpioPinDigitalInput pin) {
-        // Implementation for reading the DHT22 data
-        // This includes timing-sensitive code to communicate with the sensor
-        // Due to the complexity of timing, a native library or precise timing functions may be required
-        
-        // Placeholder for real implementation
-        return null;
-    }
-
-    private static class DHT22Data {
-        private final double humidity;
-        private final double temperature;
-
-        public DHT22Data(double humidity, double temperature) {
-            this.humidity = humidity;
-            this.temperature = temperature;
-        }
-
-        public double getHumidity() {
-            return humidity;
-        }
-
-        public double getTemperature() {
-            return temperature;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            // Shutdown Pi4J context
+            pi4j.shutdown();
         }
     }
 }
