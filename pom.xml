@@ -46,7 +46,7 @@
     </dependencies>
     <build>
         <plugins>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.1.0</version>
@@ -59,6 +59,29 @@
                     <source>17</source>
                     <target>17</target>
                 </configuration>
+            </plugin> -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven-antrun-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-assetsSH</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.build.directory}/distribution" overwrite="true" flatten="true">
+                                    <fileset dir="assets" includes="*.sh"> </fileset>
+                                </copy>
+                                <chmod dir="${project.build.directory}/distribution" perm="ugo+rx" includes="**/*.sh"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
