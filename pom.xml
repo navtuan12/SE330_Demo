@@ -66,16 +66,40 @@
                 <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <phase>prepare-package</phase>
+                        <id>copy-assetsSH</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.build.directory}/distribution" overwrite="true" flatten="true">
+                                    <fileset dir="assets" includes="*.sh"> </fileset>
+                                </copy>
+                                <chmod dir="${project.build.directory}/distribution" perm="ugo+rx" includes="**/*.sh"/>
+                            </target>
+                        </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                 <executions>
+                    <execution>
+                        <id>copySH</id>
+                        <phase>install</phase>
                         <configuration>
-                            <tasks>
-                                <mkdir dir="${project.build.directory}/distribution"/>
-                                <chmod perm="ugo+rx" includes="**/*.sh" dir="${project.build.directory}/distribution" />
-                            </tasks>
+                            <target>
+                                <copy todir="${project.build.directory}/distribution" overwrite="true" flatten="true">
+                                    <fileset dir="assets" includes="*.sh"> </fileset>
+                                </copy>
+                                <chmod dir="${project.build.directory}/distribution" perm="ugo+rx" includes="**/*.sh"/>
+                            </target>
                         </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
