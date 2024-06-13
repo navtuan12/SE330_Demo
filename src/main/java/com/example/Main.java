@@ -80,15 +80,7 @@ public class Main {
             } catch (Exception e) {
                 System.out.println("An error occurred: " + e.getMessage());
                 // Optionally handle the exception
-            } finally {
-                // Ensure we wait before reading again, even if an exception occurs
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    System.out.println("Interrupted exception during sleep: " + e.getMessage());
-                    // Optionally handle the exception
-                }
-            }
+            } 
         }
     }
 }
