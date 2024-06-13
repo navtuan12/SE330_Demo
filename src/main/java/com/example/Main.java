@@ -37,25 +37,25 @@ public class Main {
 
         DigitalInput input = pi4j.create(inputConfig);
 
-        try {
-            // Read data from the sensor
-            while (true) {
+        // Read data from the sensor
+        while (true) {
+            try {
                 // Trigger the sensor
                 output.low();
                 Thread.sleep(18);
                 output.high();
 
                 // Wait for the sensor response
-                while (input.state() == DigitalState.HIGH) ;
-                while (input.state() == DigitalState.LOW) ;
-                while (input.state() == DigitalState.HIGH) ;
+                while (input.state() == DigitalState.HIGH);
+                while (input.state() == DigitalState.LOW);
+                while (input.state() == DigitalState.HIGH);
 
                 // Read 40 bits of data
                 int[] data = new int[5];
                 for (int i = 0; i < 40; i++) {
-                    while (input.state() == DigitalState.LOW) ;
+                    while (input.state() == DigitalState.LOW);
                     long start = System.nanoTime();
-                    while (input.state() == DigitalState.HIGH) ;
+                    while (input.state() == DigitalState.HIGH);
                     long duration = System.nanoTime() - start;
                     int bitIndex = i / 8;
                     data[bitIndex] <<= 1;
@@ -74,14 +74,21 @@ public class Main {
                     System.out.println("Checksum failed");
                 }
 
-                // Wait before reading again
-                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                System.out.println("Interrupted exception: " + e.getMessage());
+                // Optionally handle the exception
+            } catch (Exception e) {
+                System.out.println("An error occurred: " + e.getMessage());
+                // Optionally handle the exception
+            } finally {
+                // Ensure we wait before reading again, even if an exception occurs
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    System.out.println("Interrupted exception during sleep: " + e.getMessage());
+                    // Optionally handle the exception
+                }
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            // Shutdown Pi4J context
-            pi4j.shutdown();
         }
     }
 }
