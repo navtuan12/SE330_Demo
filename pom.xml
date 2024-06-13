@@ -46,7 +46,7 @@
     </dependencies>
     <build>
         <plugins>
-            <!-- <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.1.0</version>
@@ -59,7 +59,7 @@
                     <source>17</source>
                     <target>17</target>
                 </configuration>
-            </plugin> -->
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
