@@ -66,8 +66,27 @@
                 <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>copy-assetsSH</id>
                         <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.directory}/distribution"/>
+                                <chmod perm="ugo+rx" includes="**/*.sh" dir="${project.build.directory}/distribution" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-assetsSH</id>
+                        <phase>package</phase>
                         <configuration>
                             <target>
                                 <copy todir="${project.build.directory}/distribution" overwrite="true" flatten="true">
