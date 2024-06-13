@@ -33,32 +33,32 @@ public class DHT22_App {
             }
         });
 
-        // for (int i = 0; i < args.length; i++) {
-        //     String o = args[i];
-        //     if (o.contentEquals("-d")) {
-        //         String a = args[i + 1];
-        //         dataPinNum = Integer.parseInt(a);
-        //         i++;
-        //     } else if (o.contentEquals("-t")) {
-        //         String a = args[i + 1];
-        //         i++;
-        //         traceLevel = a;
-        //         if (a.contentEquals("trace") | a.contentEquals("debug") | a.contentEquals("info") | a.contentEquals("warn") | a.contentEquals("error") | a.contentEquals("off")) {
-        //             console.println("Changing trace level to : " + traceLevel);
-        //         } else {
-        //             console.println("Changing trace level invalid  : " + traceLevel);
-        //             System.exit(41);
-        //         }
-        //     } else if (o.contentEquals("-h")) {
-        //         console.println(helpString);
-        //         System.exit(41);
-        //     } else {
-        //         console.println("  !!! Invalid Parm " + o);
-        //         console.println(helpString);
-        //         System.exit(43);
-        //     }
-        // }
-        dataPinNum = 7;
+        for (int i = 0; i < args.length; i++) {
+            String o = args[i];
+            if (o.contentEquals("-d")) {
+                String a = args[i + 1];
+                dataPinNum = Integer.parseInt(a);
+                i++;
+            } else if (o.contentEquals("-t")) {
+                String a = args[i + 1];
+                i++;
+                traceLevel = a;
+                if (a.contentEquals("trace") | a.contentEquals("debug") | a.contentEquals("info") | a.contentEquals("warn") | a.contentEquals("error") | a.contentEquals("off")) {
+                    console.println("Changing trace level to : " + traceLevel);
+                } else {
+                    console.println("Changing trace level invalid  : " + traceLevel);
+                    System.exit(41);
+                }
+            } else if (o.contentEquals("-h")) {
+                console.println(helpString);
+                System.exit(41);
+            } else {
+                console.println("  !!! Invalid Parm " + o);
+                console.println(helpString);
+                System.exit(43);
+            }
+        }
+        
         DHT22 sensor = new DHT22(pi4j, console, dataPinNum, traceLevel);
         sensor.readAndDisplayData();
 
