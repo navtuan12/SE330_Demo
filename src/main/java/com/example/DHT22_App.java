@@ -58,7 +58,7 @@ public class DHT22_App {
         //         System.exit(43);
         //     }
         // }
-        dataPinNum = 4;
+        dataPinNum = 7;
         DHT22 sensor = new DHT22(pi4j, console, dataPinNum, traceLevel);
         sensor.readAndDisplayData();
 
