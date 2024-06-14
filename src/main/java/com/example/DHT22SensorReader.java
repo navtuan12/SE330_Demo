@@ -1,11 +1,7 @@
 package com.example;
 
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.pi4j.library.pigpio.util.NativeLibraryLoader;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,14 +18,7 @@ public class DHT22SensorReader {
     private final int pin;
     public static native int[] readData(int pin);
     Logger logger = LoggerFactory.getLogger(DHT22SensorReader.class);
-    static {
-        try {
-            NativeLibraryLoader.loadLibraryFromClasspath("/dht22sensor.so");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+    
     public DHT22SensorReader(int pinNumber) {
         this.pin = pinNumber;
     }
