@@ -1,9 +1,11 @@
 package com.example;
 
-import com.pi4j.library.linuxfs.util.NativeLibraryLoader;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.pi4j.library.pigpio.util.NativeLibraryLoader;
 
 import java.io.IOException;
 import java.util.HashMap;
