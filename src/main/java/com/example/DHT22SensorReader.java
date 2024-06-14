@@ -1,7 +1,5 @@
 package com.example;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,7 +15,6 @@ import java.util.stream.Collectors;
 public class DHT22SensorReader {
     private final int pin;
     public static native int[] readData(int pin);
-    Logger logger = LoggerFactory.getLogger(DHT22SensorReader.class);
     
     public DHT22SensorReader(int pinNumber) {
         this.pin = pinNumber;
@@ -42,7 +39,6 @@ public class DHT22SensorReader {
 
             return Optional.of(collect.get(1).getValue());
         } catch (RuntimeException e) {
-            logger.warn("TEM CHECK WARNING", e);
         }
         return Optional.empty();
     }
@@ -59,7 +55,6 @@ public class DHT22SensorReader {
         }
 //        printData(data);
         Pair<Double,Double> dataHumTemp =  new Pair(buildNumber(data,0,16), buildNumber(data,16,32));
-        logger.debug("Temp done");
         return dataHumTemp;
     }
 
