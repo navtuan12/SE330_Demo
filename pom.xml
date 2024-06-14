@@ -67,7 +67,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.example.DHT22_App</mainClass> <!-- Replace with your main class -->
+                            <mainClass>com.example.Main</mainClass> <!-- Replace with your main class -->
                         </manifest>
                     </archive>
                 </configuration>
