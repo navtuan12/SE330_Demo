@@ -13,7 +13,7 @@ public class DHT22_App {
     public static void main(String[] args) throws InterruptedException, IOException {
         var console = new Console();
         Context pi4j = Pi4J.newAutoContext();
-        int dataPinNum = 4;
+        int dataPinNum = 5;
         String traceLevel = "trace";
         console.title("<-- The Pi4J V2 Project Extension  -->", "DHT22_App");
         String helpString = " parms:  -d  data GPIO number  -t trace " +
